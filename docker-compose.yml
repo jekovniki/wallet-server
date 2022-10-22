@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  database:
+    platform: linux/x86_64
+    image: mysql:5.7
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/0_init.sql
+      - $HOME/database/wallet-server:/var/lib/mysql
+    ports:
+      - 3307:3307
+    expose:
+      - 3307
+    environment:
+      - MYSQL_DATABASE=127.0.0.1
+      - MYSQL_ROOT_PASSWORD=password
