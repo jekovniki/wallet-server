@@ -40,6 +40,7 @@ class DatabaseTables {
             CREATE TABLE if not exists ${this.dbName}.session(
                 session_id INT NOT NULL AUTO_INCREMENT,
                 user_id INT NOT NULL,
+                jwt VARCHAR(100) NOT NULL,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 expires_at TIMESTAMP NULL,
                 primary key(session_id)
