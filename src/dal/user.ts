@@ -23,3 +23,12 @@ export async function createUserSession(userId: number): Promise<number> {
 
     return session.insertId;
 }
+
+export async function removeUserSession(sessionId: number): Promise<boolean> {
+    const session = await database.query(`
+        DELETE FROM ${dbName}.session
+        WHERE session_id like ?
+    `, [sessionId]);
+
+    return session.affectedRows > 0 ? true : false;
+}
