@@ -15,16 +15,27 @@ export async function validateUserCredentials(credentials: TRequestSignIn): Prom
     return user;
 }
 
-export async function createUserSession(userId: number): Promise<number> {
+export async function createUserSession(sessionId:string, userId: number): Promise<boolean> {
     const session = await database.query(`
-        INSERT INTO ${dbName}.session (user_id, jwt, expires_at)
-        VALUES (?, 'test', (DATE_ADD(now() , INTERVAL 1 HOUR)))
-    `, userId);
-
-    return session.insertId;
+        INSERT INTO ${dbName}.session (session_id, user_id, jwt, expires_at)
+        VALUES (?, ?, 'test', (DATE_ADD(now() , INTERVAL 1 HOUR)))
+    `, [sessionId, userId]);
+    
+    return session.affectedRows > 0 ? true : false;
 }
 
-export async function removeUserSession(sessionId: number): Promise<boolean> {
+export async function updateUserSession(sessionId: string): Promise<void> {
+    await database.query(`
+        START TRANSACTION;
+        SELECT expires_at FROM ${dbName}.session WHERE session_id like ?
+        UPDATE ${dbName}.session
+        SET expires_at = (DATE_ADD(now() , INTERVAL 1 HOUR))
+        WHERE session_id like ?
+        COMMIT;
+    `, sessionId);
+}
+
+export async function removeUserSession(sessionId: string): Promise<boolean> {
     const session = await database.query(`
         DELETE FROM ${dbName}.session
         WHERE session_id like ?

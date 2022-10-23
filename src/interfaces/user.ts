@@ -3,6 +3,11 @@ export type TRequestSignIn = {
     password: string
 }
 
+export type TResponseSignIn = {
+    success: boolean,
+    sessionId: string
+}
+
 export type TUserData = {
     id: number;
     username: string;

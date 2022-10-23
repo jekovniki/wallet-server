@@ -38,7 +38,7 @@ class DatabaseTables {
     private async createSessionTable(): Promise<void> {
         await database.query(`
             CREATE TABLE if not exists ${this.dbName}.session(
-                session_id INT NOT NULL AUTO_INCREMENT,
+                session_id VARCHAR(100) NOT NULL,
                 user_id INT NOT NULL,
                 jwt VARCHAR(100) NOT NULL,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
