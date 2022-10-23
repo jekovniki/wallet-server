@@ -1,6 +1,7 @@
 import dotenv from 'dotenv';
-import { login } from '../src/service/user';
+import { login, logout } from '../src/service/user';
 import { database } from '../src/index';
+import { createUserSession } from '../src/dal/user';
 
 dotenv.config();
 const dbName = process.env.DB_NAME ?? 'localhost';
@@ -39,5 +40,22 @@ describe('Login', () => {
         await database.query(`
             DELETE FROM ${dbName}.users WHERE username like ?
         `, [testUser.username]);
+    });
+});
+
+describe('Logout', () => {
+    let sessionId: number;
+    beforeAll(async () => {
+        sessionId = await createUserSession(99);
+    });
+    test('+ logout | should return success true', async () => {
+        const result = await logout(sessionId);
+
+        expect(result.success).toBe(true);
+    });
+    test('- logout | should return success false', async () => {
+        const result = await logout(sessionId);
+
+        expect(result.success).toBe(false);
     });
 });
