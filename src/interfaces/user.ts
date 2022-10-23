@@ -11,3 +11,7 @@ export type TUserData = {
     role: number;
     balance: number;
 }
+
+export type TUserBalance = {
+    balance: number
+}

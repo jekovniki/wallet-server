@@ -32,3 +32,11 @@ export async function removeUserSession(sessionId: number): Promise<boolean> {
 
     return session.affectedRows > 0 ? true : false;
 }
+
+export async function getUserBalance(userId: number): Promise<[{balance: number}]> {
+    return await database.query(`
+        SELECT balance
+        FROM ${dbName}.users
+        WHERE id like ?
+    `, [userId]);
+}
