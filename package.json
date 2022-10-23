@@ -8,7 +8,9 @@
     "clean": "rm -rf dist",
     "build": "tsc -p .",
     "dev": "nodemon ./src/index.ts",
-    "test": "jest test/ "
+    "test": "jest test/ ",
+    "test-user": "jest test/user.test.ts ",
+    "test-wallet": "jest test/wallet.test.ts "
   },
   "repository": {
     "type": "git",
