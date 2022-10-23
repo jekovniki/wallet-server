@@ -11,3 +11,11 @@ export async function depositFunds(amount: number, userId: number): Promise<void
         WHERE id like ?
     `, [amount, userId]);
 }
+
+export async function withdrawFunds(amount: number, userId: number): Promise<void>{
+    await database.query(`
+        UPDATE ${dbName}.users
+        SET balance = balance - ${amount}
+        WHERE id like ?
+    `, [amount, userId]);
+}
