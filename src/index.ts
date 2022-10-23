@@ -4,6 +4,8 @@ import { databaseTables } from "./dal/create";
 import dotenv from 'dotenv';
 import express from 'express';
 import mysql from 'mysql2';
+import { setPublicRoutes } from "./routes/public";
+import { Error } from "./utils/errors";
 
 dotenv.config();
 
@@ -24,9 +26,10 @@ async function main() {
         rest.start();
         database.connect();
         databaseTables.init();
+        setPublicRoutes(rest);
 
     } catch (error) {
-        console.log('Main loop error');
+        Error.internal(error);
     }
 }
 

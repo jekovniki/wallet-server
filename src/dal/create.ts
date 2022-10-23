@@ -1,5 +1,6 @@
 import { database } from "../index";
 import dotenv from 'dotenv';
+import { Error } from "../utils/errors";
 
 dotenv.config();
 
@@ -16,7 +17,7 @@ class DatabaseTables {
 
             console.log('Database tables are set and ready for use!');
         } catch (error) {
-            console.log('Issue initializing database');
+            Error.internal(error);
         }
     }
 
