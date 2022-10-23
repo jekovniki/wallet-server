@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-import { login, logout } from '../src/service/user';
+import { getUserBalance, login, logout } from '../src/service/user';
 import { database } from '../src/index';
 import { createUserSession } from '../src/dal/user';
 
@@ -15,6 +15,7 @@ const testUser = {
 }
 
 const nonExistingUser = {
+    id: 222,
     username: 'non-existin-unit-test-user',
     password: 'Test123!'
 }
@@ -57,5 +58,36 @@ describe('Logout', () => {
         const result = await logout(sessionId);
 
         expect(result.success).toBe(false);
+    });
+});
+
+describe('getUserBalance', () => {
+    let userId: any;
+    beforeAll(async () => {
+        await database.query(`
+            INSERT INTO ${dbName}.users (username, email, password, role, balance)
+            VALUES (?, ?, ?, ?, ?)
+        `, [testUser.username, testUser.email, testUser.password, testUser.role, testUser.balance]);
+
+        userId = await database.query(`
+            SELECT id
+            FROM ${dbName}.users
+            WHERE username like ?
+        `, [testUser.username]);
+    });
+    test('+ getUserBalance | should return success true', async () => {
+        const result = await getUserBalance(userId[0].id);
+
+        expect(result).toHaveProperty('balance');
+    });
+    test('- getUserBalance | should return success false', async () => {
+        const result = await getUserBalance(nonExistingUser.id);
+
+        expect(result).toHaveProperty('success');
+    });
+    afterAll(async () => {
+        await database.query(`
+            DELETE FROM ${dbName}.users WHERE username like ?
+        `, [testUser.username]);
     });
 });

@@ -1,11 +1,11 @@
-import { createUserSession, removeUserSession, validateUserCredentials } from "../dal/user";
+import * as UserDal from "../dal/user";
 import { TBaseResponse } from "../interfaces/base";
-import { TRequestSignIn } from "../interfaces/user";
+import { TRequestSignIn, TUserBalance } from "../interfaces/user";
 import { Error } from "../utils/errors";
 
 export async function login(credentials: TRequestSignIn): Promise<TBaseResponse> {
     try {
-        const user = await validateUserCredentials(credentials);
+        const user = await UserDal.validateUserCredentials(credentials);
         if (!user.length) {
             return {
                 success: false,
@@ -13,7 +13,7 @@ export async function login(credentials: TRequestSignIn): Promise<TBaseResponse>
             }
         }
         
-        const createSession = await createUserSession(user[0].id);
+        const createSession = await UserDal.createUserSession(user[0].id);
         // TODO: Make the session be a valid jwt
         
         return {
@@ -31,7 +31,7 @@ export async function login(credentials: TRequestSignIn): Promise<TBaseResponse>
 
 export async function logout(sessionId: number): Promise<TBaseResponse> {
     try {
-        const success = await removeUserSession(sessionId);
+        const success = await UserDal.removeUserSession(sessionId);
 
         if (success === false) {
             return {
@@ -42,6 +42,30 @@ export async function logout(sessionId: number): Promise<TBaseResponse> {
 
         return {
             success
+        }
+    } catch (error) {
+        Error.internal(error);
+
+        return {
+            success: false,
+            message: "Unexpected error"
+        }
+    }
+}
+
+export async function getUserBalance(userId: number): Promise<TUserBalance | TBaseResponse> {
+    try {
+        const balance = await UserDal.getUserBalance(userId);
+        
+        if (!balance.length) {
+            return {
+                success: false,
+                message: `No balance was found for user with id: ${userId}`
+            }
+        }
+
+        return {
+            balance: balance[0].balance
         }
     } catch (error) {
         Error.internal(error);
