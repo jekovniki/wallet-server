@@ -1,5 +1,5 @@
 import * as UserDal from "../dal/user";
-import { TBaseResponse } from "../interfaces/base";
+import { TBaseResponse, TRoles } from "../interfaces/base";
 import { TRequestSignIn, TResponseSignIn, TUserBalance } from "../interfaces/user";
 import { Error } from "../utils/errors";
 import { generateSessionId } from "../utils/helpers";
@@ -75,23 +75,6 @@ export async function getUserBalance(userId: number): Promise<TUserBalance | TBa
 
         return {
             balance: balance[0].balance
-        }
-    } catch (error) {
-        Error.internal(error);
-
-        return {
-            success: false,
-            message: "Unexpected error"
-        }
-    }
-}
-
-export async function updateUserSession(userId: number): Promise<TBaseResponse> {
-    try {
-        await UserDal.updateUserSession(userId);
-
-        return {
-            success: true
         }
     } catch (error) {
         Error.internal(error);

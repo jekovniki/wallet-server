@@ -1,8 +1,17 @@
 import { Error } from "../utils/errors";
-import * as UserDal from "../dal/user";
 
-export async function authorizeUser(userId: number) {
+export function authorizeUser(userRole: number, methodLevel: number) {
     try {
+        if (userRole < methodLevel) {
+            return {
+                success: false,
+                message: "You don't have the authorization level to execute this method"
+            }
+        }
+
+        return {
+            success: true
+        }
 
     } catch (error) {
         Error.internal(error);

@@ -2,7 +2,7 @@ import { TBaseResponse } from "../interfaces/base";
 import { Error } from "../utils/errors";
 import * as UserDal from "../dal/user";
 
-export async function authenticateUserSession(header: any): Promise<{success: boolean, userId: number, sessionId: string} | any> {
+export async function authenticateUserSession(header: any): Promise<{success: boolean, userId: number, userRole: number, sessionId: string} | any> {
     try {
         const token: string = header.authorization;
         
@@ -22,9 +22,12 @@ export async function authenticateUserSession(header: any): Promise<{success: bo
             }
         }
 
+        await UserDal.updateUserSession(user[0].user_id);
+
         return { 
             success: true,
             userId: user[0].user_id,
+            userRole: user[0].user_role,
             sessionId
          }
 
