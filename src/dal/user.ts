@@ -50,9 +50,9 @@ export async function getUserBalance(userId: number): Promise<[{balance: number}
     `, [userId]);
 }
 
-export async function getActiveUserSession(sessionId: string): Promise<[{user_id: number}]> {
+export async function getActiveUserSession(sessionId: string): Promise<[{user_id: number, user_role: number}]> {
     const result = await database.query(`
-        SELECT user_id
+        SELECT user_id, user_role
         FROM ${dbName}.session
         WHERE CURRENT_TIMESTAMP < expires_at
         AND session_id like ?
