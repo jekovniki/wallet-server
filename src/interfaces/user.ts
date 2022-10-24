@@ -20,3 +20,8 @@ export type TUserData = {
 export type TUserBalance = {
     balance: number
 }
+
+export type TUserSessionData = {
+    user_id: number,
+    user_role: number
+}

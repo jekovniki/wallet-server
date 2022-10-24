@@ -1,5 +1,5 @@
 import * as UserDal from "../dal/user";
-import { TBaseResponse, TRoles } from "../interfaces/base";
+import { TBaseResponse } from "../interfaces/base";
 import { TRequestSignIn, TResponseSignIn, TUserBalance } from "../interfaces/user";
 import { Error } from "../utils/errors";
 import { generateSessionId } from "../utils/helpers";

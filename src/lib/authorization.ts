@@ -1,6 +1,7 @@
+import { TBaseResponse } from "../interfaces/base";
 import { Error } from "../utils/errors";
 
-export function authorizeUser(userRole: number, methodLevel: number) {
+export function authorizeUser(userRole: number, methodLevel: number): TBaseResponse {
     try {
         if (userRole < methodLevel) {
             return {

@@ -1,5 +1,6 @@
 import * as WalletDal from '../dal/wallet';
 import { TBaseResponse } from '../interfaces/base';
+import { TTransactions } from '../interfaces/wallet';
 import { Transactions, TransactionType } from '../utils/enums';
 import { Error } from "../utils/errors";
 
@@ -55,7 +56,7 @@ export async function withdrawFunds(amount: number, userId: number): Promise<TBa
     }
 }
 
-export async function getLatestTransactions(userId: number, list: number) {
+export async function getLatestTransactions(userId: number, list: number | null): Promise<TTransactions[] | TBaseResponse> {
     try {
         const numberOfTransactions = list ?? Transactions.DEFAULT;
         const transactions = WalletDal.getLatestTransactions(userId, numberOfTransactions);

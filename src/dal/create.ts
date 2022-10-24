@@ -1,10 +1,11 @@
 import { database } from "../index";
 import dotenv from 'dotenv';
 import { Error } from "../utils/errors";
+import { IGenerateDatabaseTables } from "../interfaces/database";
 
 dotenv.config();
 
-class DatabaseTables {
+class DatabaseTables implements IGenerateDatabaseTables {
     private dbName = process.env.DB_NAME ?? 'localhost';
 
     public async init() {
@@ -33,6 +34,10 @@ class DatabaseTables {
                 primary key(id)
             )
         `);
+
+        await database.query(`
+            INSERT IGNORE INTO ${this.dbName}.users(username, email, password, balance)
+            VALUES (?, ?, ?, ?)`, ['user', 'user@yopmail.com', 'Aa123456!', 1000000]);
     }
 
     private async createSessionTable(): Promise<void> {

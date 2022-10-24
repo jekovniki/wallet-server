@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-import { TRequestSignIn, TUserData } from "../interfaces/user";
+import { TRequestSignIn, TUserBalance, TUserData, TUserSessionData } from "../interfaces/user";
 import { database } from "../index";
 import { TRoles } from '../interfaces/base';
 
@@ -42,7 +42,7 @@ export async function removeUserSession(sessionId: string): Promise<boolean> {
     return session.affectedRows > 0 ? true : false;
 }
 
-export async function getUserBalance(userId: number): Promise<[{balance: number}]> {
+export async function getUserBalance(userId: number): Promise<TUserBalance[]> {
     return await database.query(`
         SELECT balance
         FROM ${dbName}.users
@@ -50,7 +50,7 @@ export async function getUserBalance(userId: number): Promise<[{balance: number}
     `, [userId]);
 }
 
-export async function getActiveUserSession(sessionId: string): Promise<[{user_id: number, user_role: number}]> {
+export async function getActiveUserSession(sessionId: string): Promise<TUserSessionData[]> {
     const result = await database.query(`
         SELECT user_id, user_role
         FROM ${dbName}.session
