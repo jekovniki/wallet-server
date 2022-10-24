@@ -30,7 +30,7 @@ const setAuthenticationLevel = (level: number = Roles.BASIC) => {
     }
 }
 
-async function middleware(request: any, response: any, next: any) {
+async function middleware(request: any, response: any, next: any): Promise<void> {
     const session = await authenticateUserSession(request.headers);
     if (session.success === false) {
         response.send(session);

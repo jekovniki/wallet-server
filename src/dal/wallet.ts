@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 import { database } from "../index";
-import { TTransactionTypes } from '../interfaces/wallet';
+import { TTransactions, TTransactionTypes } from '../interfaces/wallet';
 
 dotenv.config();
 const dbName = process.env.DB_NAME ?? 'localhost';
@@ -38,7 +38,7 @@ export async function getTransactionTypes(id: number): Promise<TTransactionTypes
     return result;
 }
 
-export async function getLatestTransactions(userId: number, list: number) {
+export async function getLatestTransactions(userId: number, list: number): Promise<TTransactions[]> {
     const result = await database.query(`
         SELECT * 
         FROM ${dbName}.transactions 

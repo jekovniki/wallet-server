@@ -1,8 +1,8 @@
-import { TBaseResponse } from "../interfaces/base";
+import { IUserSession, TBaseResponse } from "../interfaces/base";
 import { Error } from "../utils/errors";
 import * as UserDal from "../dal/user";
 
-export async function authenticateUserSession(header: any): Promise<{success: boolean, userId: number, userRole: number, sessionId: string} | any> {
+export async function authenticateUserSession(header: any): Promise<IUserSession | any> {
     try {
         const token: string = header.authorization;
         
