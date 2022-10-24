@@ -15,7 +15,7 @@ export async function login(credentials: TRequestSignIn): Promise<TResponseSignI
         }
 
         const sessionId = generateSessionId();
-        const createSession = await UserDal.createUserSession(sessionId, user[0].id);
+        const createSession = await UserDal.createUserSession(sessionId, user[0].id, user[0].role);
         // TODO: Make the session be a valid jwt
         if (createSession === false) {
             return {
@@ -51,23 +51,6 @@ export async function logout(sessionId: string): Promise<TBaseResponse> {
 
         return {
             success
-        }
-    } catch (error) {
-        Error.internal(error);
-
-        return {
-            success: false,
-            message: "Unexpected error"
-        }
-    }
-}
-
-export async function updateUserSession(session_id: string): Promise<TBaseResponse> {
-    try {
-        await UserDal.updateUserSession(session_id);
-
-        return {
-            success: true
         }
     } catch (error) {
         Error.internal(error);
