@@ -37,6 +37,7 @@ There is a default user:
 <strong>username:</strong> user
 <strong>password:</strong> Aa123456!
 Default role is BASIC (can only logout and check balance);
+You can adjust the user in the .env file before you run the codebase for the first time
 
 On login you will receive sessionId. Put it as Bearer token in postman when you execute the private methods.
 
