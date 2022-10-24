@@ -2,7 +2,7 @@ import bodyParser from "body-parser";
 import { RestServer } from "../lib/rest";
 import * as Public from "./public";
 import * as Private from "./private";
-import { authorizeUser, authorizeUserSession } from "../lib/authorization";
+import { authenticateUserSession } from "../lib/authentication";
 
 export async function setRoutes(rest: RestServer): Promise<void> {
     const server = rest.getServer();
@@ -13,7 +13,7 @@ export async function setRoutes(rest: RestServer): Promise<void> {
     server.post('/auth/login', Public.login);
 
     server.get('/auth/logout', middleware, Private.logout);
-    server.post('/users/balance', middleware, Private.getBalance);
+    server.get('/users/balance', middleware, Private.getBalance);
     server.post('/wallet/list', middleware, Private.getLatestTransactions);
     server.post('/wallet/deposit', middleware, Private.depositFunds);
     server.post('/wallet/withdraw', middleware, Private.withdrawFunds);
@@ -21,7 +21,7 @@ export async function setRoutes(rest: RestServer): Promise<void> {
 }
 
 async function middleware(request: any, response: any, next: any): Promise<void> {
-    const session = await authorizeUserSession(request.headers);
+    const session = await authenticateUserSession(request.headers);
     if (session.success === false) {
         response.send(session);
     }
@@ -31,8 +31,6 @@ async function middleware(request: any, response: any, next: any): Promise<void>
         userId: session.userId,
         sessionId: session.sessionId
     }
-    
-    // const authorizedUser = await authorizeUser(session.userId);
     
     next();
 }

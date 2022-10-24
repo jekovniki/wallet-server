@@ -85,3 +85,20 @@ export async function getUserBalance(userId: number): Promise<TUserBalance | TBa
         }
     }
 }
+
+export async function updateUserSession(userId: number): Promise<TBaseResponse> {
+    try {
+        await UserDal.updateUserSession(userId);
+
+        return {
+            success: true
+        }
+    } catch (error) {
+        Error.internal(error);
+
+        return {
+            success: false,
+            message: "Unexpected error"
+        }
+    }
+}

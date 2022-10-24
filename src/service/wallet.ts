@@ -12,7 +12,6 @@ export async function depositFunds(amount: number, userId: number): Promise<TBas
                 message: 'Invalid transaction type'
             }
         }
-
         await WalletDal.depositFunds(amount, userId);
         await WalletDal.addTransaction(amount, userId, transactionType[0].id);
 
@@ -56,9 +55,10 @@ export async function withdrawFunds(amount: number, userId: number): Promise<TBa
     }
 }
 
-export async function getLatestTransactions(userId: number, list: number = Transactions.DEFAULT) {
+export async function getLatestTransactions(userId: number, list: number) {
     try {
-        const transactions = WalletDal.getLatestTransactions(userId, list);
+        const numberOfTransactions = list ?? Transactions.DEFAULT;
+        const transactions = WalletDal.getLatestTransactions(userId, numberOfTransactions);
 
         return transactions;
 

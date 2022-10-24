@@ -10,7 +10,7 @@ export async function depositFunds(amount: number, userId: number): Promise<void
         UPDATE ${dbName}.users
         SET balance = balance + ${amount}
         WHERE id like ?
-    `, [amount, userId]);
+    `, [userId]);
 }
 
 export async function withdrawFunds(amount: number, userId: number): Promise<void>{
@@ -18,7 +18,7 @@ export async function withdrawFunds(amount: number, userId: number): Promise<voi
         UPDATE ${dbName}.users
         SET balance = balance - ${amount}
         WHERE id like ?
-    `, [amount, userId]);
+    `, [userId]);
 }
 
 export async function addTransaction(amount: number, userId: number, transactionType: number): Promise<void> {
