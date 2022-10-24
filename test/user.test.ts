@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 import { getUserBalance, login, logout } from '../src/service/user';
 import { database } from '../src/index';
 import { createUserSession } from '../src/dal/user';
+import { generateSessionId } from '../src/utils/helpers';
 
 dotenv.config();
 const dbName = process.env.DB_NAME ?? 'localhost';
@@ -45,9 +46,10 @@ describe('Login', () => {
 });
 
 describe('Logout', () => {
-    let sessionId: number;
+    let sessionId: string;
     beforeAll(async () => {
-        sessionId = await createUserSession(99);
+        sessionId = generateSessionId();
+        await createUserSession(sessionId, 1, 1);
     });
     test('+ logout | should return success true', async () => {
         const result = await logout(sessionId);

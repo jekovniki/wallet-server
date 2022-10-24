@@ -2,13 +2,14 @@ import bodyParser from "body-parser";
 import { RestServer } from "../lib/rest";
 import * as Public from "./public";
 import * as Private from "./private";
+import { authorizeUser, authorizeUserSession } from "../lib/authorization";
 
 export async function setRoutes(rest: RestServer): Promise<void> {
     const server = rest.getServer();
 
     server.use(bodyParser.json());
 
-    server.get('/health-check',middleware, Public.healthCheck);
+    server.get('/health-check', Public.healthCheck);
     server.post('/auth/login', Public.login);
 
     server.get('/auth/logout', middleware, Private.logout);
@@ -19,8 +20,19 @@ export async function setRoutes(rest: RestServer): Promise<void> {
 
 }
 
-async function middleware(_req: any, _res: any, next: any) {
-    console.log('This is private method');
+async function middleware(request: any, response: any, next: any): Promise<void> {
+    const session = await authorizeUserSession(request.headers);
+    if (session.success === false) {
+        response.send(session);
+    }
 
+    request.body = {
+        ...request.body,
+        userId: session.userId,
+        sessionId: session.sessionId
+    }
+    
+    // const authorizedUser = await authorizeUser(session.userId);
+    
     next();
 }

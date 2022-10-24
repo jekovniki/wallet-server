@@ -27,7 +27,6 @@ async function main() {
         database.connect();
         databaseTables.init();
         setRoutes(rest);
-
     } catch (error) {
         Error.internal(error);
     }

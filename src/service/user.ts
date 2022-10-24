@@ -1,9 +1,10 @@
 import * as UserDal from "../dal/user";
 import { TBaseResponse } from "../interfaces/base";
-import { TRequestSignIn, TUserBalance } from "../interfaces/user";
+import { TRequestSignIn, TResponseSignIn, TUserBalance } from "../interfaces/user";
 import { Error } from "../utils/errors";
+import { generateSessionId } from "../utils/helpers";
 
-export async function login(credentials: TRequestSignIn): Promise<TBaseResponse> {
+export async function login(credentials: TRequestSignIn): Promise<TResponseSignIn | TBaseResponse> {
     try {
         const user = await UserDal.validateUserCredentials(credentials);
         if (!user.length) {
@@ -12,12 +13,20 @@ export async function login(credentials: TRequestSignIn): Promise<TBaseResponse>
                 message: "Invalid credentials"
             }
         }
-        
-        const createSession = await UserDal.createUserSession(user[0].id);
+
+        const sessionId = generateSessionId();
+        const createSession = await UserDal.createUserSession(sessionId, user[0].id, user[0].role);
         // TODO: Make the session be a valid jwt
-        
+        if (createSession === false) {
+            return {
+                success: false,
+                message: 'Could not generate session'
+            }
+        }
+
         return {
-            success: true
+            success: createSession,
+            sessionId
         }
     } catch (error) {
         Error.internal(error);
@@ -29,7 +38,7 @@ export async function login(credentials: TRequestSignIn): Promise<TBaseResponse>
     }
 }
 
-export async function logout(sessionId: number): Promise<TBaseResponse> {
+export async function logout(sessionId: string): Promise<TBaseResponse> {
     try {
         const success = await UserDal.removeUserSession(sessionId);
 

@@ -1,6 +1,7 @@
 import dotenv from 'dotenv';
 import { TRequestSignIn, TUserData } from "../interfaces/user";
 import { database } from "../index";
+import { TRoles } from '../interfaces/base';
 
 dotenv.config();
 const dbName = process.env.DB_NAME ?? 'localhost';
@@ -15,16 +16,24 @@ export async function validateUserCredentials(credentials: TRequestSignIn): Prom
     return user;
 }
 
-export async function createUserSession(userId: number): Promise<number> {
+export async function createUserSession(sessionId:string, userId: number, userRole: number): Promise<boolean> {
     const session = await database.query(`
-        INSERT INTO ${dbName}.session (user_id, jwt, expires_at)
-        VALUES (?, 'test', (DATE_ADD(now() , INTERVAL 1 HOUR)))
-    `, userId);
-
-    return session.insertId;
+        INSERT INTO ${dbName}.session (session_id, user_id, user_role, jwt, expires_at)
+        VALUES (?, ?, ?, 'test', (DATE_ADD(now() , INTERVAL 1 HOUR)))
+    `, [sessionId, userId, userRole]);
+    
+    return session.affectedRows > 0 ? true : false;
 }
 
-export async function removeUserSession(sessionId: number): Promise<boolean> {
+export async function updateUserSession(userId: number): Promise<void> {
+    await database.query(`
+        UPDATE ${dbName}.session
+        SET expires_at = (DATE_ADD(now() , INTERVAL 1 HOUR))
+        WHERE user_id like ?
+    `, userId);
+}
+
+export async function removeUserSession(sessionId: string): Promise<boolean> {
     const session = await database.query(`
         DELETE FROM ${dbName}.session
         WHERE session_id like ?
@@ -39,4 +48,22 @@ export async function getUserBalance(userId: number): Promise<[{balance: number}
         FROM ${dbName}.users
         WHERE id like ?
     `, [userId]);
+}
+
+export async function getActiveUserSession(sessionId: string): Promise<[{user_id: number}]> {
+    const result = await database.query(`
+        SELECT user_id
+        FROM ${dbName}.session
+        WHERE CURRENT_TIMESTAMP < expires_at
+        AND session_id like ?
+    `, sessionId);
+
+    return result;
+}
+
+export async function getAllRoles(): Promise<TRoles[]> {
+    return await database.query(`
+        SELECT *
+        FROM ${dbName}.roles
+    `);
 }
